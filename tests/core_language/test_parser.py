@@ -52,6 +52,11 @@ def test_parses_kitchen_sink():
     parse(KITCHEN_SINK)
 
 
+def test_format_loc():
+    assert repr(Loc(5, 3)) == '<Loc start=5 end=3>'
+    assert repr(Loc(5, 3, 2)) == '<Loc start=5 end=3 source=2>'
+
+
 def test_parse_creates_ast():
     source = Source("""{
   node(id: 4) {
@@ -101,12 +106,12 @@ def test_parse_creates_ast():
                                    arguments=[],
                                    directives=[],
                                    selection_set=None),
-                                ast.Field(
-                                    loc=Loc(30, 34, source),
-                                    alias=None,
-                                    name=ast.Name(
-                                        loc=Loc(30, 34, source),
-                                        value='name'),
-                                    arguments=[],
-                                    directives=[],
-                                    selection_set=None)]))]))])
+                                   ast.Field(
+                                       loc=Loc(30, 34, source),
+                                       alias=None,
+                                       name=ast.Name(
+                                           loc=Loc(30, 34, source),
+                                           value='name'),
+                                       arguments=[],
+                                       directives=[],
+                                       selection_set=None)]))]))])

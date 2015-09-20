@@ -95,7 +95,7 @@ class TypeFieldResolvers(object):
             if isinstance(type, klass):
                 return kind
 
-        raise Exception('Unknown kind of type: {}'.format(type))
+        raise ValueError('Unknown kind of type: {}'.format(type))
 
     @staticmethod
     def fields(type, args, *_):
