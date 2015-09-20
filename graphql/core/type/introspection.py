@@ -66,6 +66,17 @@ __Directive = GraphQLObjectType('__Directive', lambda: {
 })
 
 
+class TypeKind(object):
+    SCALAR = 0
+    OBJECT = 1
+    INTERFACE = 2
+    UNION = 3
+    ENUM = 4
+    INPUT_OBJECT = 5
+    LIST = 6
+    NON_NULL = 7
+
+
 class TypeFieldResolvers(object):
     _class_to_kinds = (
         (GraphQLScalarType, TypeKind.SCALAR),
@@ -208,18 +219,6 @@ __EnumValue = GraphQLObjectType('__EnumValue', lambda: {
         resolver=lambda enum_value, *_: enum_value.deprecation_reason,
     )
 })
-
-
-class TypeKind(object):
-    SCALAR = 0
-    OBJECT = 1
-    INTERFACE = 2
-    UNION = 3
-    ENUM = 4
-    INPUT_OBJECT = 5
-    LIST = 6
-    NON_NULL = 7
-
 
 __TypeKind = GraphQLEnumType(
     '__TypeKind',
