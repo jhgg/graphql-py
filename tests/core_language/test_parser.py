@@ -1,7 +1,7 @@
 from pytest import raises
 from graphql.core.language.error import LanguageError
 from graphql.core.language.source import Source
-from graphql.core.language.parser import parse
+from graphql.core.language.parser import parse, Loc
 from graphql.core.language import ast
 from fixtures import KITCHEN_SINK
 
@@ -64,48 +64,48 @@ def test_parse_creates_ast():
 
     assert result == \
            ast.Document(
-               loc={'start': 0, 'end': 41, 'source': source},
+               loc=Loc(0, 41, source),
                definitions=
                [ast.OperationDefinition(
-                   loc={'start': 0, 'end': 40, 'source': source},
+                   loc=Loc(0, 40, source),
                    operation='query',
                    name=None,
                    variable_definitions=None,
                    directives=[],
                    selection_set=ast.SelectionSet(
-                       loc={'start': 0, 'end': 40, 'source': source},
+                       loc=Loc(0, 40, source),
                        selections=
                        [ast.Field(
-                           loc={'start': 4, 'end': 38, 'source': source},
+                           loc=Loc(4, 38, source),
                            alias=None,
                            name=ast.Name(
-                               loc={'start': 4, 'end': 8, 'source': source},
+                               loc=Loc(4, 8, source),
                                value='node'),
                            arguments=[ast.Argument(
-                               name=ast.Name(loc={'start': 9, 'end': 11, 'source': source},
+                               name=ast.Name(loc=Loc(9, 11, source),
                                              value='id'),
                                value=ast.IntValue(
-                                   loc={'start': 13, 'end': 14, 'source': source},
+                                   loc=Loc(13, 14, source),
                                    value='4'),
-                               loc={'start': 9, 'end': 14, 'source': source})],
+                               loc=Loc(9, 14, source))],
                            directives=[],
                            selection_set=ast.SelectionSet(
-                               loc={'start': 16, 'end': 38, 'source': source},
+                               loc=Loc(16, 38, source),
                                selections=
                                [ast.Field(
-                                   loc={'start': 22, 'end': 24, 'source': source},
+                                   loc=Loc(22, 24, source),
                                    alias=None,
                                    name=ast.Name(
-                                       loc={'start': 22, 'end': 24, 'source': source},
+                                       loc=Loc(22, 24, source),
                                        value='id'),
                                    arguments=[],
                                    directives=[],
                                    selection_set=None),
                                 ast.Field(
-                                    loc={'start': 30, 'end': 34, 'source': source},
+                                    loc=Loc(30, 34, source),
                                     alias=None,
                                     name=ast.Name(
-                                        loc={'start': 30, 'end': 34, 'source': source},
+                                        loc=Loc(30, 34, source),
                                         value='name'),
                                     arguments=[],
                                     directives=[],
