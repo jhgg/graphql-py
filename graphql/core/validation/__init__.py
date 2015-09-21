@@ -50,8 +50,6 @@ def visit_using_rules(schema, ast, rules):
 
 
 class ValidationVisitor(Visitor):
-    __slots__ = ['instance', 'type_info', 'errors', 'visit_spread_fragments']
-
     def __init__(self, rules, context, type_info, errors):
         self.context = context
         self.rules = rules
@@ -62,8 +60,9 @@ class ValidationVisitor(Visitor):
 
     def enter(self, node, key, parent, path, ancestors):
         self.type_info.enter(node)
-        to_ignore = []
-        wants_to_visit_fragment = []
+        to_ignore = None
+        rules_wanting_to_visit_fragment = None
+
         skipped = 0
         for rule in self.rules:
             if rule in self.ignore_children:
@@ -73,32 +72,44 @@ class ValidationVisitor(Visitor):
             visit_spread_fragments = getattr(rule, 'visit_spread_fragments', False)
 
             if isinstance(node, FragmentDefinition) and key and visit_spread_fragments:
+                if to_ignore is None:
+                    to_ignore = []
+
                 to_ignore.append(rule)
                 continue
 
             result = rule.enter(node, key, parent, path, ancestors)
+
             if result and is_error(result):
                 append(self.errors, result)
                 result = False
 
             if result is None and visit_spread_fragments and isinstance(node, FragmentSpread):
-                wants_to_visit_fragment.append(rule)
+                if rules_wanting_to_visit_fragment is None:
+                    rules_wanting_to_visit_fragment = []
+
+                rules_wanting_to_visit_fragment.append(rule)
 
             if result is False:
+                if to_ignore is None:
+                    to_ignore = []
+
                 to_ignore.append(rule)
 
-        if wants_to_visit_fragment:
+        if rules_wanting_to_visit_fragment:
             fragment = self.context.get_fragment(node.name.value)
 
             if fragment:
-                visit(fragment, ValidationVisitor(wants_to_visit_fragment, self.context, self.type_info, self.errors))
+                sub_visitor = ValidationVisitor(rules_wanting_to_visit_fragment, self.context, self.type_info,
+                                                self.errors)
+                visit(fragment, sub_visitor)
 
-        should_skip = len(to_ignore) + skipped == self.total_rules
+        should_skip = (len(to_ignore) if to_ignore else 0 + skipped) == self.total_rules
 
         if should_skip:
             self.type_info.leave(node)
 
-        else:
+        elif to_ignore:
             for rule in to_ignore:
                 self.ignore_children[rule] = node
 
